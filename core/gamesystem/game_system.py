@@ -1,43 +1,38 @@
-from bases.interfaces.object_interface import ObjectInterface
-from bases.interfaces.group_interface import GroupInterface
-from bases.group import Group
+import bases
 
 class GameSystem:
     def __init__(self):
-        self.__last_uid = 0
-        self.__unused_uids = []
-        self.__all_objects: Group = Group('AllObjects')
-        self.__all_groups: Group = Group('AllGroups')
+        self.__last_unused_uid: int = 0
+        self.__unused_uids: 'list[int]' = []
+        self.__all_objects: 'list[bases.Object | bases.Group]' = []
     
 
-    def add_object(self, obj: ObjectInterface):
-        self.__all_objects.add_object(obj)
-    
-    def add_group(self, group: GroupInterface):
-        self.__all_groups.add_object(group)
+    def add_object(self, obj: 'bases.Object'):
+        if obj.get_uid() == self.__last_unused_uid - 1:
+            self.__all_objects.append(obj)
+        else:
+            self.__all_objects[obj.get_uid()] = obj
     
 
     def generate_uid(self) -> int:
         if len(self.__unused_uids) != 0:
             return self.__unused_uids.pop()
 
-        uid = self.__last_uid
-        self.__last_uid += 1
+        uid = self.__last_unused_uid
+        self.__last_unused_uid += 1
         return uid
     
 
     def unlock_uid(self, uid: int) :
-        if uid == self.__last_uid - 1:
-            self.__last_uid -= 1
+        if uid == self.__last_unused_uid - 1:
+            self.__last_unused_uid -= 1
             return
         
         if uid not in self.__unused_uids:
             self.__unused_uids.append(uid)
     
 
-    def get_element_by_uid(self, uid: int): pass
+    def get_element_by_uid(self, uid: int): ...
 
-    def get_group_by_name(self, name: str): pass
-
-    def get_objects_by_name(self, name: str): pass
+    def get_element_by_name(self, name: str): ...
     

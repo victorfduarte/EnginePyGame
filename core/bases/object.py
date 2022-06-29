@@ -1,30 +1,29 @@
-from bases.interfaces import CollisionInterface
-from bases.interfaces import DrawInterface
-from bases import Group
-from bases import Screen
-from gamesystem import game
+import pygame as pg
+import bases
+import bases.interfaces as interfaces
+import gamesystem as gs
 
 
-class Object(DrawInterface, CollisionInterface):
-    def __init__(self, parent: Screen, nome: str):
-        self.__nome = nome
-        self.__uid = game.generate_uid()
-        self.__parent = parent
-        self.__colliders = []
-        self.__surfaces = []
-        self.__conteiners: Group = Group('Compose')
+class Object(interfaces.DrawInterface, interfaces.CollisionInterface):
+    def __init__(self, parent: 'bases.Screen', nome: str):
+        self.__nome: str = nome
+        self.__uid: int = gs.game.generate_uid()
+        self.__parent: 'bases.Screen' = parent
+        self.__colliders: 'pg.Rect' = []
+        self.__surfaces: 'pg.Surface' = []
+        self.__conteiners: 'list[bases.Group]' = []
 
-        game.add_object(self)
+        gs.game.add_object(self)
     
 
     def __eq__(self, __o: 'Object') -> bool:
         return self.__uid == __o.get_uid()
     
-    def compose(self, group: Group):
-        self.__conteiners.add_object(group)
+    def compose(self, group: 'bases.Group'):
+        self.__conteiners.append(group)
     
-    def decompose(self, group: Group):
-        self.__conteiners.remove_object(group)
+    def decompose(self, group: 'bases.Group'):
+        self.__conteiners.remove(group)
 
 
     # GETTERS
@@ -34,13 +33,13 @@ class Object(DrawInterface, CollisionInterface):
     def get_uid(self) -> int:
         return self.__uid
     
-    def get_parent(self) -> Screen:
+    def get_parent(self) -> 'bases.Screen':
         return self.__parent
     
-    def get_surfaces(self) -> 'list[Surfaces]':
+    def get_surfaces(self) -> 'list[pg.Surface]':
         return self.__colliders
     
-    def get_collider(self) -> 'list[Rect]':
+    def get_collider(self) -> 'list[pg.Rect]':
         return self.__surfaces
     
 
@@ -51,11 +50,11 @@ class Object(DrawInterface, CollisionInterface):
     def set_uid(self, uid: int) -> None:
         self.__uid = uid
     
-    def set_parent(self, parent: Screen) -> None:
+    def set_parent(self, parent: 'bases.Screen') -> None:
         self.__parent = parent
     
-    def set_sufaces(self, *surfaces: 'Surface') -> None:
+    def set_sufaces(self, *surfaces: 'pg.Surface') -> None:
         self.__surfaces = list(surfaces)
 
-    def set_collider(self, *colliiders: 'Rect') -> None:
+    def set_collider(self, *colliiders: 'pg.Rect') -> None:
         self.__colliders = list(colliiders)

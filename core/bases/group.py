@@ -1,93 +1,94 @@
-from typing import Iterator
-from bases.interfaces.object_interface import ObjectInterface
-from bases.interfaces.group_interface import GroupInterface
-from bases.group_iterator import GroupIterator
-from gamesystem import game
+import pygame as pg
+import bases.interfaces as interfaces
+import bases
+import gamesystem as gs
 
-
-class Group(GroupInterface):
-    def __init__(self, nome: str, *objs: ObjectInterface):
+class Group(interfaces.DrawInterface, interfaces.CollisionInterface):
+    def __init__(self, nome: str, *objs: 'bases.Object'):
         self.__nome = nome
-        self.__uid = game.generate_uid()
-        self.__conteiners: 'Group' = Group()
-        self._objects: 'list[ObjectInterface]' = []
+        self.__uid = gs.game.generate_uid()
+        self.__conteiners: 'list[Group]' = []
+        self.__objects: 'list[bases.Object]' = []
 
-        self.add_object(*objs)
+        self.add(*objs)
+
+        gs.game.add_object(self)
 
 
-
-    def add_object(self, *objs: ObjectInterface):
+    def add(self, *objs: 'bases.Object'):
         for obj in objs:
-            if obj not in self._objects:
-                self._objects.append(obj)
+            if obj not in self.__objects:
+                self.__objects.append(obj)
+                obj.compose(self)
     
 
-    def remove_object(self, *objs: ObjectInterface):
+    def remove(self, *objs: 'bases.Object'):
         for obj in objs:
-            if obj in self._objects:
-                self._objects.remove(obj)
+            if obj in self.__objects:
+                self.__objects.remove(obj)
+                obj.decompose(self)
     
 
-    def get_by_uid(self, uid: int) -> ObjectInterface:
+    def get_by_uid(self, uid: int) -> 'bases.Object':
         pass
 
 
-    def get_by_name(self, name: str) -> 'tuple[ObjectInterface]':
+    def get_by_name(self, name: str) -> 'tuple[bases.Object]':
         pass
 
 
-    def __eq__(self, __o: GroupInterface):
+    def __eq__(self, __o: 'Group'):
         return self.get_nome() == __o.get_nome()
 
-    def __getitem__(self, index: int) -> ObjectInterface :
-        return self._objects[index]
+    def __getitem__(self, index: int) -> 'bases.Object' :
+        return self.__objects[index]
     
-    def __setitem__(self, index: int, item: ObjectInterface):
-        self._objects[index] = item
+    def __setitem__(self, index: int, item: 'bases.Object'):
+        self.__objects[index] = item
 
-    def __iter__(self) -> Iterator:
-        return GroupIterator(self)
+    def __iter__(self) -> 'bases.GroupIterator':
+        return bases.GroupIterator(self)
     
 
     # Getters
-    def get_objects(self) -> 'list[ObjectInterface]':
-        return self._objects
+    def get_objects(self) -> 'list[bases.Object]':
+        return self.__objects
     
     def get_nome(self) -> str:
-        return self._nome
+        return self.__nome
     
     def get_uid(self) -> int:
-        return self._uid
+        return self.__uid
     
-    def get_surfaces(self) -> 'list[Surfaces]':
+    def get_surfaces(self) -> 'list[pg.Surface]':
         surfaces = []
-        for obj in self._objects:
+        for obj in self.__objects:
             surfaces.append(obj.get_surfaces())
         return surfaces
     
-    def get_collider(self) -> 'list[Rect]':
+    def get_collider(self) -> 'list[pg.Rect]':
         colliders = []
-        for obj in self._objects:
+        for obj in self.__objects:
             colliders.append(obj.get_collider())
         return colliders
     
     
     # Setters
-    def set_objects(self, *objs: ObjectInterface):
-        self._objects = []
-        self.add_object(*objs)
+    def set_objects(self, *objs: 'bases.Object'):
+        self.__objects = []
+        self.add(*objs)
     
     def set_nome(self, nome: str) -> None:
-        self._nome = nome
+        self.__nome = nome
     
     def set_uid(self, uid: int) -> None:
-        self._uid = uid
+        self.__uid = uid
     
-    def set_sufaces(self, *surfaces: 'Surface'):
-        for obj in self._objects:
+    def set_sufaces(self, *surfaces: 'pg.Surface'):
+        for obj in self.__objects:
             obj.set_sufaces(*surfaces)
     
-    def set_collider(self, *colliders: 'Rect') -> None:
-        for obj in self._objects:
+    def set_collider(self, *colliders: 'pg.Rect') -> None:
+        for obj in self.__objects:
             obj.set_collider(*colliders)
     
