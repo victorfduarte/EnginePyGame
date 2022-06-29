@@ -1,4 +1,5 @@
+import pygame as pg
 
 class DrawInterface:
-    def get_surfaces() -> 'list[Surfaces]': pass
-    def set_sufaces(surfaces: 'list[Surface]'): pass 
+    def get_surfaces() -> 'list[pg.Surface]': ...
+    def set_sufaces(surfaces: 'list[pg.Surface]'): ... 
