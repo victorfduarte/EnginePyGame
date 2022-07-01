@@ -1,6 +1,6 @@
 import bases
 
-class GameSystem:
+class ObjectManager:
     def __init__(self):
         self.__last_unused_uid: int = 0
         self.__unused_uids: 'list[int]' = []
@@ -12,6 +12,12 @@ class GameSystem:
             self.__all_objects.append(obj)
         else:
             self.__all_objects[obj.get_uid()] = obj
+    
+
+    def get_element_by_uid(self, uid: int): ...
+
+
+    def get_element_by_name(self, name: str): ...
     
 
     def generate_uid(self) -> int:
@@ -30,9 +36,4 @@ class GameSystem:
         
         if uid not in self.__unused_uids:
             self.__unused_uids.append(uid)
-    
-
-    def get_element_by_uid(self, uid: int): ...
-
-    def get_element_by_name(self, name: str): ...
     

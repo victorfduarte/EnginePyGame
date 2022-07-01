@@ -1,9 +1,9 @@
-from zmq import GSSAPI_NT_HOSTBASED
-import gamesystem.game_system as gs
 
-game: gs.GameSystem = None
+import gamesystem.object_manager as om
+
+game: 'om.ObjectManager' = None
 
 
 def init():
     global game
-    game = gs.GameSystem()
+    game = om.ObjectManager()

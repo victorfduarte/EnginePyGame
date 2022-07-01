@@ -1,7 +1,9 @@
 
+import pygame
 import gamesystem
 from bases import *
 
+pygame.init()
 gamesystem.init()
 
 tela = Screen('Jogo')
