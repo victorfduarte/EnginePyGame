@@ -14,10 +14,12 @@ class Object(interfaces.DrawInterface, interfaces.CollisionInterface):
         self.__conteiners: 'list[bases.Group]' = []
 
         gs.game.add_object(self)
+        parent.add(self)
     
 
     def __eq__(self, __o: 'Object') -> bool:
         return self.__uid == __o.get_uid()
+
     
     def compose(self, group: 'bases.Group'):
         self.__conteiners.append(group)

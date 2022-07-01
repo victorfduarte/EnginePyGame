@@ -1,18 +1,16 @@
 import pygame as pg
-import bases.interfaces as interfaces
 import bases
+import bases.interfaces as interfaces
 import gamesystem as gs
+
 
 class Group(interfaces.DrawInterface, interfaces.CollisionInterface):
     def __init__(self, nome: str, *objs: 'bases.Object'):
         self.__nome = nome
-        self.__uid = gs.game.generate_uid()
         self.__conteiners: 'list[Group]' = []
         self.__objects: 'list[bases.Object]' = []
 
         self.add(*objs)
-
-        gs.game.add_object(self)
 
 
     def add(self, *objs: 'bases.Object'):
@@ -40,12 +38,6 @@ class Group(interfaces.DrawInterface, interfaces.CollisionInterface):
     def __eq__(self, __o: 'Group'):
         return self.get_nome() == __o.get_nome()
 
-    def __getitem__(self, index: int) -> 'bases.Object' :
-        return self.__objects[index]
-    
-    def __setitem__(self, index: int, item: 'bases.Object'):
-        self.__objects[index] = item
-
     def __iter__(self) -> 'bases.GroupIterator':
         return bases.GroupIterator(self)
     
@@ -56,9 +48,6 @@ class Group(interfaces.DrawInterface, interfaces.CollisionInterface):
     
     def get_nome(self) -> str:
         return self.__nome
-    
-    def get_uid(self) -> int:
-        return self.__uid
     
     def get_surfaces(self) -> 'list[pg.Surface]':
         surfaces = []
@@ -80,9 +69,6 @@ class Group(interfaces.DrawInterface, interfaces.CollisionInterface):
     
     def set_nome(self, nome: str) -> None:
         self.__nome = nome
-    
-    def set_uid(self, uid: int) -> None:
-        self.__uid = uid
     
     def set_sufaces(self, *surfaces: 'pg.Surface'):
         for obj in self.__objects:
